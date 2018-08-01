@@ -146,6 +146,13 @@ class MyTest(unittest.TestCase):
             "libc_and_cpp", "libc_and_cpp_with_unused_struct", 0,
             ['-check-all-apis', '-advice-only'])
 
+    def test_libc_and_cpp_opaque_pointer_diff(self):
+        self.prepare_and_run_abi_diff_all_archs(
+            "libc_and_cpp_with_opaque_ptr_a",
+            "libc_and_cpp_with_opaque_ptr_b", 8,
+            ['-consider-opaque-types-different'], True,
+            True)
+
     def test_libgolden_cpp_return_type_diff(self):
         self.prepare_and_run_abi_diff_all_archs(
             "libgolden_cpp", "libgolden_cpp_return_type_diff", 8)
@@ -248,6 +255,22 @@ class MyTest(unittest.TestCase):
             "libgolden_cpp_function_pointer_parameter_added", 8, [], False,
             False)
 
+    def test_libgolden_cpp_internal_struct_access_upgraded(self):
+        self.prepare_and_run_abi_diff_all_archs(
+            "libgolden_cpp_internal_private_struct",
+            "libgolden_cpp_internal_public_struct", 0, [], True,
+            True)
+
+    def test_libgolden_cpp_internal_struct_access_downgraded(self):
+        self.prepare_and_run_abi_diff_all_archs(
+            "libgolden_cpp_internal_public_struct",
+            "libgolden_cpp_internal_private_struct", 8, [], True,
+            True)
+
+    def test_libgolden_cpp_inheritance_type_changed(self):
+        self.prepare_and_run_abi_diff_all_archs(
+            "libgolden_cpp", "libgolden_cpp_inheritance_type_changed", 8, [],
+            True, True)
 
 
 if __name__ == '__main__':
