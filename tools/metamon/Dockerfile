@@ -10,6 +10,8 @@
 FROM ubuntu:18.04
 
 # Install dependencies from the package manager.
+#   - git: Access META repositories
+#   - pigz: Parallel gzip to speed up archive creation
 #   - python: Dependency for Google Cloud command line client
 #   - python3: Dependency for META monitor service
 #   - python3-pip: Install required python library dependencies
@@ -17,6 +19,7 @@ FROM ubuntu:18.04
 RUN apt update && \
     apt install -y \
     git \
+    pigz \
     python \
     python3 \
     python3-pip \
@@ -24,10 +27,10 @@ RUN apt update && \
 
 # Google Cloud SDK installation command borrowed from...
 # https://github.com/pivotal-cf/bosh-concourse-deployments/blob/master/docker/Dockerfile
-ENV GCLOUD_SDK_VERSION=211.0.0
+ENV GCLOUD_SDK_VERSION=212.0.0
 RUN wget -q -O /usr/gcloud.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-$GCLOUD_SDK_VERSION-linux-x86_64.tar.gz && \
     ( \
-      echo '53becbf0a512bc1f928921a116c9a397cbf172621849e1d85dd2f906933b2241' /usr/gcloud.tar.gz | \
+      echo '8f5191131672004363b0c238b3151d987d0f307808e720e1eecc5071f2d9c681' /usr/gcloud.tar.gz | \
       sha256sum -c - \
     ) && \
     tar -C /usr/ -xzf /usr/gcloud.tar.gz && \
@@ -64,12 +67,7 @@ ENV SECRET_URL=${SECRET_URL}
 ENV KMS_PROJECT=${KMS_PROJECT}
 ENV KMS_KEYRING=${KMS_KEYRING}
 ENV KMS_KEY=${KMS_KEY}
+ENV WORK_DIR="/tmp"
 
 # Run the META monitor service by default.
-ENTRYPOINT [ \
-    "bash", \
-    "/usr/sbin/run.sh", \
-    "$SECRET_URL", \
-    "$KMS_PROJECT", \
-    "$KMS_KEYRING", \
-    "$KMS_KEY"]
+ENTRYPOINT bash /usr/sbin/run.sh $SECRET_URL $KMS_PROJECT $KMS_KEYRING $KMS_KEY
