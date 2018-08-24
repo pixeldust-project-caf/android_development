@@ -64,7 +64,7 @@ external/chromium-trace/UPSTREAM_REVISION                                 platfo
 # Compatibility: moved to platform but also leave them in platform-tools for a little
 # longer until all active Gradle plugins have support for looking in both places
 development/sdk/generated-api-versions.xml    platform-tools/api/api-versions.xml
-prebuilts/sdk/sdk-annotations/annotations.zip   platform-tools/api/annotations.zip
+${OUT_DIR}/target/common/obj/PACKAGING/api-stubs-docs_annotations.zip   platform-tools/api/annotations.zip
 
 ##############################################################################
 # Build Tools Component
@@ -136,7 +136,7 @@ framework/dx.jar                              build-tools/${PLATFORM_NAME}/lib/d
 bin/dexdump                                   build-tools/${PLATFORM_NAME}/dexdump
 
 # d8
-prebuilts/r8/d8-master.jar                    build-tools/${PLATFORM_NAME}/lib/d8.jar
+prebuilts/r8/buildtools/d8-master.jar         build-tools/${PLATFORM_NAME}/lib/d8.jar
 prebuilts/r8/d8                               build-tools/${PLATFORM_NAME}/d8
 
 # multi-dex
@@ -158,8 +158,9 @@ ${HOST_OUT}/development/sdk/platform_source.properties                          
 sdk/sdk-build.prop                                                                            platforms/${PLATFORM_NAME}/build.prop
 
 # Main Public API jar
-${OUT_DIR}/target/common/obj/PACKAGING/android_jar_intermediates/android.jar                  platforms/${PLATFORM_NAME}/android.jar
-${OUT_DIR}/target/common/obj/PACKAGING/android_jar_intermediates/android-stubs-src.jar        platforms/${PLATFORM_NAME}/android-stubs-src.jar
+${OUT_DIR}/target/common/obj/PACKAGING/android_jar_intermediates/android.jar            platforms/${PLATFORM_NAME}/android.jar
+${OUT_DIR}/target/common/obj/PACKAGING/android_jar_intermediates/android-stubs-src.jar  platforms/${PLATFORM_NAME}/android-stubs-src.jar
+
 # optional API files.
 development/build/optional.json                                                               platforms/${PLATFORM_NAME}/optional/optional.json
 ${OUT_DIR}/target/common/obj/JAVA_LIBRARIES/org.apache.http.legacy.stubs_intermediates/classes.jar  platforms/${PLATFORM_NAME}/optional/org.apache.http.legacy.jar
@@ -205,16 +206,17 @@ development/sdk/generated-api-versions.xml  platforms/${PLATFORM_NAME}/data/api-
 
 # API annotations database for lint
 prebuilts/sdk/sdk-annotations/annotations.zip platforms/${PLATFORM_NAME}/data/annotations.zip
+${OUT_DIR}/target/common/obj/PACKAGING/api-stubs-docs_annotations.zip platforms/${PLATFORM_NAME}/data/annotations.zip
 
 # Eclipse Editors support
 framework/layoutlib-legacy.jar            platforms/${PLATFORM_NAME}/data/layoutlib.jar
 frameworks/base/core/res/res              platforms/${PLATFORM_NAME}/data/res
-docs/activity_actions.txt                 platforms/${PLATFORM_NAME}/data/activity_actions.txt
-docs/broadcast_actions.txt                platforms/${PLATFORM_NAME}/data/broadcast_actions.txt
-docs/service_actions.txt                  platforms/${PLATFORM_NAME}/data/service_actions.txt
-docs/categories.txt                       platforms/${PLATFORM_NAME}/data/categories.txt
-docs/widgets.txt                          platforms/${PLATFORM_NAME}/data/widgets.txt
-docs/features.txt                         platforms/${PLATFORM_NAME}/data/features.txt
+docs/offline-sdk/activity_actions.txt                 platforms/${PLATFORM_NAME}/data/activity_actions.txt
+docs/offline-sdk/broadcast_actions.txt                platforms/${PLATFORM_NAME}/data/broadcast_actions.txt
+docs/offline-sdk/service_actions.txt                  platforms/${PLATFORM_NAME}/data/service_actions.txt
+docs/offline-sdk/categories.txt                       platforms/${PLATFORM_NAME}/data/categories.txt
+docs/offline-sdk/widgets.txt                          platforms/${PLATFORM_NAME}/data/widgets.txt
+docs/offline-sdk/features.txt                         platforms/${PLATFORM_NAME}/data/features.txt
 
 # fonts for layoutlib.
 ${FONT_OUT}                       platforms/${PLATFORM_NAME}/data/fonts
@@ -410,7 +412,6 @@ development/samples/LceDemo                    samples/${PLATFORM_NAME}/legacy/L
 development/samples/LunarLander                samples/${PLATFORM_NAME}/legacy/LunarLander
 development/samples/MultiResolution            samples/${PLATFORM_NAME}/legacy/MultiResolution
 development/samples/NotePad                    samples/${PLATFORM_NAME}/legacy/NotePad
-development/samples/RandomMusicPlayer          samples/${PLATFORM_NAME}/legacy/RandomMusicPlayer
 development/samples/SpellChecker/SampleSpellCheckerService samples/${PLATFORM_NAME}/legacy/SpellChecker/SampleSpellCheckerService
 development/samples/SpellChecker/HelloSpellChecker         samples/${PLATFORM_NAME}/legacy/SpellChecker/HelloSpellChecker
 development/samples/SampleSyncAdapter          samples/${PLATFORM_NAME}/legacy/SampleSyncAdapter
