@@ -56,3 +56,12 @@ started as follows.
 ```shell
 $ docker run keystone-meta-monitor
 ```
+
+# Test
+
+The Keystone META monitor has a (growing) unit test suite. Run it with the
+following command.
+
+```shell
+$ python3 meta_monitor_test.py
+```

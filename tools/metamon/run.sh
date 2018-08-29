@@ -33,7 +33,8 @@ echo "Extract credentials to $HOME"
 tar -C "$HOME" -xzf "$HOME/secrets.tar.gz" || { exit 1; }
 
 # Run long-lived service.
+#   - meta_poll_interval: 7200 seconds chosen arbitrarily as a compomise betwen
+#     responsiveness and low overhead to the remote server.
 echo "Start Keystone META monitor"
-exec python3 /usr/sbin/meta_monitor.py \
-    --meta_poll_interval=3600 \
-    --log=INFO
+exec python3 /usr/sbin/meta_monitor_gce.py \
+    --meta_poll_interval=7200
