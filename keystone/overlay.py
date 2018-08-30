@@ -11,6 +11,7 @@ from __future__ import print_function
 import os
 import subprocess
 import tempfile
+import overlay_configs
 
 
 class Mount(object):
@@ -32,11 +33,6 @@ class Mount(object):
 class Overlay(object):
   """Manages filesystem overlays of Android source tree.
   """
-  OVERLAY_MAP = {
-      'sdm845': ['qcom-LA.UM.7.3-incoming'],
-      'sdm845_gms': ['qcom-LA.UM.7.3-incoming', 'gms'],
-      'sdm660_64': ['qcom-LA.UM.7.2-incoming'],
-  }
 
   def _MountOverlay(self, source_dir, overlay_dirs, target):
     """Mounts the selected overlay directory.
@@ -131,7 +127,7 @@ class Overlay(object):
                    ['sudo', 'umount', original_out_dir])
 
     overlay_dirs = []
-    for overlay_dir in self.OVERLAY_MAP[target]:
+    for overlay_dir in overlay_configs.OVERLAY_MAP[target]:
       overlay_dir = os.path.join(source_dir, 'overlays', overlay_dir)
 
       # Create an empty overlays file to white out overlays dir.
