@@ -203,7 +203,7 @@ async def target_meta_loop(commands, target, interval, work_dir, loop):
     logging.info('%s: new META tags: %s', target, ' '.join(meta_tags_delta))
 
     # Clone the repo and verify that HEAD points to a new tag.
-    target_meta_tag = await clone_target_meta(commands, target, target_work_dir)
+    target_meta_tag = await clone_target_meta(commands, git_target_url, target_work_dir)
     if target_meta_tag not in new_meta_tags:
       logging.warning(
           '%s: Expected new tags but HEAD points to %s', target,
@@ -218,49 +218,3 @@ async def target_meta_loop(commands, target, interval, work_dir, loop):
 
     # TODO(brianorr): Kick off META build for the new tag.
     current_meta_tags = new_meta_tags
-
-
-def main():
-  # Parse command line flags.
-  parser = argparse.ArgumentParser()
-  parser.add_argument(
-      '--meta_poll_interval',
-      type=int,
-      default=3600,
-      help='Time between META poll attempts in seconds.')
-  parser.add_argument(
-      '--log',
-      default='WARN',
-      help='Set the Python logging level.')
-  args = parser.parse_args()
-
-  # Set the runtime log level or raise an exception if the user provided an
-  # invalid log enum.
-  numeric_level = getattr(logging, args.log.upper(), None)
-  if not isinstance(numeric_level, int):
-    raise ValueError('Invalid log level: %s' % args.log)
-  logging.basicConfig(level=numeric_level)
-
-  loop = asyncio.get_event_loop()
-
-  # Create a top level working folder for clone and archive operations.
-  work_dir = tempfile.mkdtemp()
-  logging.info('Working folder is %s', work_dir)
-
-  # Use actual subprocess commands in production.
-  commands = MetaMonitorCommands()
-
-  # Create a polling loop coroutine for each Qualcomm SoC.
-  targets = [
-      target_meta_loop(
-          commands, target, args.meta_poll_interval, work_dir, loop)
-      for target in META_TARGETS]
-
-  # Use asyncio.gather() to submit all coroutines to the event loop as
-  # recommended by @gvanrossum in the GitHub issue comments at
-  # https://github.com/python/asyncio/issues/477#issuecomment-269038238
-  loop.run_until_complete(asyncio.gather(*targets))
-
-
-if __name__ == '__main__':
-  main()

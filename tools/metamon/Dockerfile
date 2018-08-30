@@ -27,10 +27,10 @@ RUN apt update && \
 
 # Google Cloud SDK installation command borrowed from...
 # https://github.com/pivotal-cf/bosh-concourse-deployments/blob/master/docker/Dockerfile
-ENV GCLOUD_SDK_VERSION=212.0.0
+ENV GCLOUD_SDK_VERSION=213.0.0
 RUN wget -q -O /usr/gcloud.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-$GCLOUD_SDK_VERSION-linux-x86_64.tar.gz && \
     ( \
-      echo '8f5191131672004363b0c238b3151d987d0f307808e720e1eecc5071f2d9c681' /usr/gcloud.tar.gz | \
+      echo '236e124b906a47ad896e276f7e84bf59ecbf06c8fdde1dd541c59a3f3408962b' /usr/gcloud.tar.gz | \
       sha256sum -c - \
     ) && \
     tar -C /usr/ -xzf /usr/gcloud.tar.gz && \
@@ -38,19 +38,19 @@ RUN wget -q -O /usr/gcloud.tar.gz https://dl.google.com/dl/cloudsdk/channels/rap
     rm /usr/gcloud.tar.gz
 
 # Python dependencies installed from PIP.
-#   - aiohttp: Make calls to Cloud Build's REST API
 #   - google-api-python-client: Client library for Google Cloud
+#   - google-cloud-logging: Client library for logging to StackDriver
 RUN pip3 install \
-    aiohttp \
-    google-api-python-client
+    google-api-python-client \
+    google-cloud-logging
 
 # Remove transient dependencies.
 RUN apt remove -y \
-    python3-pip \
     wget
 RUN apt autoremove -y
 
-# META monitor service script.
+# META monitor service scripts.
+COPY meta_monitor_gce.py /usr/sbin/meta_monitor_gce.py
 COPY meta_monitor.py /usr/sbin/meta_monitor.py
 COPY run.sh /usr/sbin/run.sh
 
