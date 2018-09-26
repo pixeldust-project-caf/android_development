@@ -13,6 +13,7 @@ OVERLAY_MAP = {
     'sdm845_gms': ['qcom-LA.UM.7.3-incoming', 'gms'],
     'sdm660_64': ['qcom-LA.UM.7.2-incoming'],
     'cuttlestone_x86_phone': ['cuttlestone'],
+    'msmnile': ['qcom-LA.UM.7.1.r1-incoming'],
 }
 
 _CUTTLESTONE_FS_VIEW = [
