@@ -10,6 +10,16 @@ import subprocess
 import tempfile
 import unittest
 import overlay
+import overlay_configs
+import re
+
+
+# Extend the overlay config with unit test entries
+overlay_configs.OVERLAY_MAP['unittest'] = ['unittest1', 'unittest2']
+overlay_configs.FS_VIEW_MAP['unittest'] = [
+    ('overlays/unittest1/from_dir', 'to_dir'),
+    ('overlays/unittest1/from_file', 'to_file'),
+]
 
 
 class MountTest(unittest.TestCase):
@@ -56,44 +66,86 @@ class OverlayTest(unittest.TestCase):
     self.source_dir = tempfile.mkdtemp()
     os.mkdir(os.path.join(self.source_dir, 'overlays'))
     os.mkdir(os.path.join(self.source_dir,
-                          'overlays', 'qcom-LA.UM.7.3-incoming'))
+                          'overlays', 'unittest1'))
     os.mkdir(os.path.join(self.source_dir,
-                          'overlays', 'gms'))
+                          'overlays', 'unittest1', 'from_dir'))
+    open(os.path.join(self.source_dir,
+                      'overlays', 'unittest1', 'from_file'), 'a').close()
+    os.mkdir(os.path.join(self.source_dir,
+                          'overlays', 'unittest2'))
 
   def tearDown(self):
     shutil.rmtree(self.source_dir)
 
-  def testCreateFromValidTarget(self):
+  def testValidTargetOverlayMount(self):
     o = overlay.Overlay(
-        target='sdm845_gms',
+        target='unittest',
         source_dir=self.source_dir)
     self.assertIsNotNone(o)
     mounts = o.GetMountInfo()
-    mount_commands = [mount['mount_command'] for mount in mounts]
-    self.assertIn(
-        [
-            'sudo', 'mount',
-            '--types', 'overlay',
-            '--options',
-            'lowerdir=%s/overlays/qcom-LA.UM.7.3-incoming:%s/overlays/gms:%s,'
-            'upperdir=%s/out/overlays/sdm845_gms/artifacts,'
-            'workdir=%s/out/overlays/sdm845_gms/work'
-            % (self.source_dir, self.source_dir, self.source_dir,
-               self.source_dir, self.source_dir),
-            'overlay',
-            self.source_dir
-        ],
-        mount_commands
-    )
-    unmount_commands = [mount['unmount_command'] for mount in mounts]
-    self.assertIn(
-        ['sudo', 'umount', os.path.join(self.source_dir)],
-        unmount_commands
-    )
-    self.assertIn(
-        ['sudo', 'umount', os.path.join(self.source_dir, 'out')],
-        unmount_commands
-    )
+    mount_commands = [' '.join(mount['mount_command']) for mount in mounts]
+    unmount_commands = [' '.join(mount['unmount_command']) for mount in mounts]
+    self.assertTrue(
+        any([
+            re.match(
+                'sudo mount --types overlay --options '
+                'lowerdir=%s/overlays/unittest1:%s/overlays/unittest2:.*/ovtmp_.*:%s,'
+                'upperdir=%s/out/overlays/unittest/artifacts,'
+                'workdir=%s/out/overlays/unittest/work '
+                'overlay %s' %
+                (self.source_dir, self.source_dir, self.source_dir,
+                 self.source_dir, self.source_dir, self.source_dir), command)
+            for command in mount_commands
+        ]))
+    self.assertIn('sudo umount %s' % os.path.join(self.source_dir),
+                  unmount_commands)
+    self.assertIn('sudo umount %s' % os.path.join(self.source_dir, 'out'),
+                  unmount_commands)
+
+  def testValidTargetFilesystemViewDirectory(self):
+    o = overlay.Overlay(
+        target='unittest',
+        source_dir=self.source_dir)
+    self.assertIsNotNone(o)
+    mounts = o.GetMountInfo()
+    mount_commands = [' '.join(mount['mount_command']) for mount in mounts]
+    unmount_commands = [' '.join(mount['unmount_command']) for mount in mounts]
+    self.assertTrue(
+        any([
+            re.match(
+                'sudo mount --bind '
+                '%s/overlays/unittest1/from_dir .*/bindtmp_' %
+                self.source_dir, command) for command in mount_commands
+        ]))
+    self.assertTrue(
+        any([
+            re.match(
+                'sudo mount --bind '
+                '.*/bindtmp_.* %s/to_dir' % self.source_dir, command)
+            for command in mount_commands
+        ]))
+    self.assertIn('sudo umount %s' % os.path.join(self.source_dir, 'to_dir'),
+                  unmount_commands)
+
+  def testValidTargetFilesystemViewFile(self):
+    o = overlay.Overlay(
+        target='unittest',
+        source_dir=self.source_dir)
+    self.assertIsNotNone(o)
+    mounts = o.GetMountInfo()
+    mount_commands = [' '.join(mount['mount_command']) for mount in mounts]
+    unmount_commands = [' '.join(mount['unmount_command']) for mount in mounts]
+    self.assertTrue(
+        any([
+            re.match(
+                'cp %s/overlays/unittest1/from_file .*/ovtmp_.*/to_file' %
+                self.source_dir, command) for command in mount_commands
+        ]))
+    self.assertTrue(
+        any([
+            re.match('rm -f .*/ovtmp_.*/to_file', command)
+            for command in unmount_commands
+        ]))
 
   def testInvalidTarget(self):
     with self.assertRaises(KeyError):

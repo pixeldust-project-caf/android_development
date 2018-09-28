@@ -201,8 +201,9 @@ class VTableComponentIR {
     UnusedFunctionPointer = 7
   };
 
-  VTableComponentIR(const std::string &name, Kind kind, int64_t value)
-      : component_name_(name), kind_(kind), value_(value) { }
+  VTableComponentIR(const std::string &name, Kind kind, int64_t value,
+                    bool is_pure)
+      : component_name_(name), kind_(kind), value_(value), is_pure_(is_pure) { }
 
   VTableComponentIR() { }
 
@@ -218,10 +219,15 @@ class VTableComponentIR {
     return component_name_;
   }
 
+  bool GetIsPure() const {
+    return is_pure_;
+  }
+
  protected:
   std::string component_name_;
   Kind kind_;
   int64_t value_ = 0;
+  bool is_pure_;
 };
 
 class VTableLayoutIR {

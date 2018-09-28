@@ -252,8 +252,8 @@ class MyTest(unittest.TestCase):
     def test_libgolden_cpp_member_function_pointer_changed(self):
         self.prepare_and_run_abi_diff_all_archs(
             "libgolden_cpp_function_pointer",
-            "libgolden_cpp_function_pointer_parameter_added", 8, [], False,
-            False)
+            "libgolden_cpp_function_pointer_parameter_added", 8, [], True,
+            True)
 
     def test_libgolden_cpp_internal_struct_access_upgraded(self):
         self.prepare_and_run_abi_diff_all_archs(
@@ -271,6 +271,12 @@ class MyTest(unittest.TestCase):
         self.prepare_and_run_abi_diff_all_archs(
             "libgolden_cpp", "libgolden_cpp_inheritance_type_changed", 8, [],
             True, True)
+
+    def test_libpure_virtual_function(self):
+        self.prepare_and_absolute_diff_all_archs(
+            "libpure_virtual_function",
+            "libpure_virtual_function",
+        )
 
 
 if __name__ == '__main__':

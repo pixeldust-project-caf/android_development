@@ -470,6 +470,15 @@ TEST_MODULES = [
         arch = '',
         api = 'current',
     ),
+    Module(
+        name = 'libpure_virtual_function',
+        srcs = ['integration/cpp/pure_virtual/pure_virtual_function.cpp'],
+        export_include_dirs = ['integration/cpp/pure_virtual/include'],
+        version_script = '',
+        cflags = [],
+        arch = '',
+        api = 'current',
+    ),
 ]
 
 TEST_MODULES = { m.name: m for m in TEST_MODULES }
