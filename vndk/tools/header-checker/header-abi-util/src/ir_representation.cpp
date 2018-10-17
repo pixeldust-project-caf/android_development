@@ -67,8 +67,9 @@ TextFormatToIRReader::CreateTextFormatToIRReader(
   switch (text_format) {
     case TextFormatIR::ProtobufTextFormat:
       return std::make_unique<ProtobufTextFormatToIRReader>(exported_headers);
+    case TextFormatIR::Json:
+      return std::make_unique<JsonToIRReader>(exported_headers);
     default:
-      // Nothing else is supported yet.
       llvm::errs() << "Text format not supported yet\n";
       return nullptr;
   }
@@ -574,6 +575,15 @@ void TextFormatToIRReader::MergeGraphs(const TextFormatToIRReader &addend) {
   for (auto &&global_var_ir : addend.global_variables_) {
     MergeGlobalVariable(&global_var_ir.second, addend, &merged_types_cache);
   }
+}
+
+bool TextFormatToIRReader::IsLinkableMessageInExportedHeaders(
+    const LinkableMessageIR *linkable_message) const {
+  if (exported_headers_ == nullptr || exported_headers_->empty()) {
+    return true;
+  }
+  return exported_headers_->find(linkable_message->GetSourceFile()) !=
+         exported_headers_->end();
 }
 } // namespace abi_util
 
