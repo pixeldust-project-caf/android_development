@@ -79,6 +79,41 @@ class BuildBusytownTest(unittest.TestCase):
         ]
     )
 
+  def testExtraBuildTarget(self):
+    build_busytown.nsjail.__file__ = '/'
+    os.chdir('/')
+    commands = build_busytown.build(
+        'target_name',
+        'userdebug',
+        nsjail_bin='/bin/true',
+        chroot='/chroot',
+        dist_dir='/dist_dir',
+        build_id='0',
+        max_cpus=1,
+        extra_build_goals=['extra_build_target'])
+
+    self.assertEqual(
+        commands,
+        [
+            [
+                '/bin/true',
+                '--bindmount', '/:/src',
+                '--chroot', '/chroot',
+                '--env', 'USER=android-build',
+                '--config', '/nsjail.cfg',
+                '--bindmount', '/dist_dir:/dist',
+                '--env', 'DIST_DIR=/dist',
+                '--env', 'BUILD_NUMBER=0',
+                '--max_cpus=1',
+                '--',
+                '/src/development/keystone/build_keystone.sh',
+                'target_name-userdebug',
+                '/src',
+                'make', '-j', 'droid', 'showcommands', 'dist', 'platform_tests',
+                'extra_build_target'
+            ]
+        ]
+    )
 
 if __name__ == '__main__':
   unittest.main()

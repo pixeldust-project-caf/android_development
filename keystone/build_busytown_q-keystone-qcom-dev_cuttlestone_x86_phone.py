@@ -3,4 +3,4 @@
 
 import build_busytown
 
-build_busytown.build_target('cuttlestone_x86_phone', 'userdebug')
+build_busytown.build_target('cuttlestone_x86_phone', 'userdebug', extra_build_goals=['tests'])
