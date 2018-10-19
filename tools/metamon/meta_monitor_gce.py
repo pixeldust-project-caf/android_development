@@ -37,7 +37,7 @@ try:
   client = google.cloud.logging.Client()
   logger.addHandler(client.get_default_handler())
   logger.setLevel(logging.INFO)
-except:
+except ImportError:
   logger.addHandler(logging.StreamHandler())
 
 
@@ -72,7 +72,7 @@ def main():
   try:
     loop.run_until_complete(asyncio.gather(*targets))
   except KeyboardInterrupt:
-    logger.warn('Received interrupt: shutting down')
+    logger.warning('Received interrupt: shutting down')
   finally:
     loop.close()
 

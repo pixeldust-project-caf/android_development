@@ -150,7 +150,7 @@ class MetaMonitorTest(unittest.TestCase):
         '-czf', 'meta-source-%s.tar.gz' % target,
         '.',
         cwd=work_dir)
-    mock_gsutil.assert_called_with(
+    mock_gsutil.assert_called_once_with(
         '-q', 'cp', 'meta-source-%s.tar.gz' % target,
         'gs://meta-source/%s/%s/meta-source.tar.gz' % (target, tag),
         cwd='/tmp')
