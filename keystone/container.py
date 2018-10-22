@@ -66,9 +66,8 @@ def main():
   parser.add_argument(
       '--android_target',
       choices=overlay_configs.OVERLAY_MAP.keys(),
-      default=overlay_configs.OVERLAY_MAP.keys()[0],
-      help='Android target for building inside container. '
-      'Defaults to %s.' % overlay_configs.OVERLAY_MAP.keys()[0])
+      required=True,
+      help='Android target for building inside container.')
   parser.add_argument(
       '--docker_bin',
       default='docker',

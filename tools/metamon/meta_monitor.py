@@ -7,7 +7,6 @@ integration builds. Also monitors META integration builds and pushes build state
 to a Cloud SQL database.
 """
 
-import argparse
 import asyncio
 import logging
 import os
@@ -29,7 +28,7 @@ try:
   client = google.cloud.logging.Client()
   logger.addHandler(client.get_default_handler())
   logger.setLevel(logging.INFO)
-except:
+except ImportError:
   logger.addHandler(logging.StreamHandler())
 
 
@@ -72,7 +71,7 @@ async def fetch_git_tags(commands, url):
   """
   git_subproc = await commands.git(
       'ls-remote', '--refs', '--tags', url, cwd=None)
-  stdout, stderr = await git_subproc.communicate()
+  stdout, _ = await git_subproc.communicate()
   returncode = await git_subproc.wait()
   if returncode:
     logger.warning('git ls-remote returned %d', returncode)
@@ -95,7 +94,7 @@ async def clone_git_repo(commands, url, target_work_dir):
     Returns the empty string when the underlying commands fail.
   """
   rm_subproc = await commands.rm('-rf', target_work_dir, cwd=None)
-  stdout, stderr = await rm_subproc.communicate()
+  stdout, _ = await rm_subproc.communicate()
   returncode = await rm_subproc.wait()
   if returncode:
     logger.warning('rm returned %d', returncode)
@@ -103,14 +102,14 @@ async def clone_git_repo(commands, url, target_work_dir):
 
   git_clone_subproc = await commands.git(
       'clone', '--depth=1', '--quiet', url, target_work_dir, cwd=None)
-  stdout, stderr = await git_clone_subproc.communicate()
+  stdout, _ = await git_clone_subproc.communicate()
   returncode = await git_clone_subproc.wait()
   if returncode:
     logger.warning('git clone returned %d', returncode)
     return ''
 
   git_describe_subproc = await commands.git('describe', cwd=target_work_dir)
-  stdout, stderr = await git_describe_subproc.communicate()
+  stdout, _ = await git_describe_subproc.communicate()
   returncode = await git_describe_subproc.wait()
   if returncode:
     logger.warning('git describe returned %d', returncode)
@@ -136,7 +135,7 @@ async def archive_git_repo(
   archive_name = 'meta-source-%s.tar.gz' % alias
   tar_subproc = await commands.tar(
       '-C', target_work_dir, '-czf', archive_name, '.', cwd=work_dir)
-  stdout, stderr = await tar_subproc.communicate()
+  await tar_subproc.communicate()
   returncode = await tar_subproc.wait()
   if returncode:
     logger.warning('%s: tar returned %d', alias, returncode)
@@ -146,7 +145,7 @@ async def archive_git_repo(
       '-q', 'cp', archive_name,
       'gs://meta-source/%s/%s/meta-source.tar.gz' % (alias, git_tag),
       cwd=work_dir)
-  stdout, stderr = await gsutil_subproc.communicate()
+  await gsutil_subproc.communicate()
   returncode = await gsutil_subproc.wait()
   if returncode:
     logger.warning('%s: gsutil returned %d', alias, returncode)
@@ -167,7 +166,7 @@ async def cleanup_target(commands, alias, work_dir, target_work_dir):
     True for success. False for failure.
   """
   rm_subproc = await commands.rm('-rf', target_work_dir, cwd=None)
-  stdout, stderr = await rm_subproc.communicate()
+  await rm_subproc.communicate()
   returncode = await rm_subproc.wait()
   if returncode:
     logger.warning('rm returned %d', returncode)
