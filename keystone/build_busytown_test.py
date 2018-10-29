@@ -21,7 +21,8 @@ class BuildBusytownTest(unittest.TestCase):
         chroot='/chroot',
         dist_dir='/dist_dir',
         build_id='0',
-        max_cpus=1)
+        max_cpus=1,
+        build_goals=build_busytown.DEFAULT_BUILD_GOALS)
 
     self.assertEqual(
         commands,
@@ -40,7 +41,7 @@ class BuildBusytownTest(unittest.TestCase):
                 '/src/development/keystone/build_keystone.sh',
                 'target_name-userdebug',
                 '/src',
-                'make', '-j', 'droid', 'showcommands', 'dist', 'platform_tests'
+                'make', '-j', 'droid', 'dist', 'platform_tests'
             ]
         ]
     )
@@ -55,7 +56,8 @@ class BuildBusytownTest(unittest.TestCase):
         chroot='/chroot',
         dist_dir='/dist_dir',
         build_id='0',
-        max_cpus=1)
+        max_cpus=1,
+        build_goals=build_busytown.DEFAULT_BUILD_GOALS)
 
     self.assertEqual(
         commands,
@@ -74,12 +76,12 @@ class BuildBusytownTest(unittest.TestCase):
                 '/src/development/keystone/build_keystone.sh',
                 'target_name-user',
                 '/src',
-                'make', '-j', 'droid', 'showcommands', 'dist', 'platform_tests'
+                'make', '-j', 'droid', 'dist', 'platform_tests'
             ]
         ]
     )
 
-  def testExtraBuildTarget(self):
+  def testExtraBuildGoals(self):
     build_busytown.nsjail.__file__ = '/'
     os.chdir('/')
     commands = build_busytown.build(
@@ -90,7 +92,8 @@ class BuildBusytownTest(unittest.TestCase):
         dist_dir='/dist_dir',
         build_id='0',
         max_cpus=1,
-        extra_build_goals=['extra_build_target'])
+        build_goals=build_busytown.DEFAULT_BUILD_GOALS +
+          ['extra_build_target'])
 
     self.assertEqual(
         commands,
@@ -109,7 +112,7 @@ class BuildBusytownTest(unittest.TestCase):
                 '/src/development/keystone/build_keystone.sh',
                 'target_name-userdebug',
                 '/src',
-                'make', '-j', 'droid', 'showcommands', 'dist', 'platform_tests',
+                'make', '-j', 'droid', 'dist', 'platform_tests',
                 'extra_build_target'
             ]
         ]
