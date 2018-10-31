@@ -7,4 +7,4 @@ build_goals = [
     'TEMPORARY_DISABLE_PATH_RESTRICTIONS=true', '-k'
 ]
 
-build_busytown.build_target_custom('msm8937_32go', 'userdebug', build_goals)
+build_busytown.build_target('msm8937_32go', 'userdebug', build_goals)
