@@ -71,9 +71,12 @@ RUN apt-get install -y \
     pkg-config \
     protobuf-compiler
 
-RUN git clone --depth=1 https://github.com/google/nsjail.git
-
-RUN make --directory=/nsjail && mv /nsjail/nsjail /bin && rm -rf -- /nsjail
+ENV NSJAIL_VERSION=2.6
+RUN git clone https://github.com/google/nsjail.git && \
+    git -C nsjail checkout $NSJAIL_VERSION && \
+    make --directory=nsjail && \
+    mv nsjail/nsjail /bin && \
+    rm -rf nsjail
 
 # This COPY command almost vestigial. Nsjail now gets its configuration from
 # the mounted source tree (which means we can change the jail configuration
