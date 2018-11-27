@@ -4,7 +4,7 @@
 import build_busytown
 
 build_goals = build_busytown.DEFAULT_BUILD_GOALS + [
-    'tests', 'TEMPORARY_DISABLE_PATH_RESTRICTIONS=true', '-k'
+    'tests', '-k'
 ]
 
 build_busytown.build_target('msm8937_32go', 'userdebug', build_goals)
