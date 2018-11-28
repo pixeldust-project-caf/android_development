@@ -1,6 +1,6 @@
 FROM ubuntu:14.04
 
-ENV NSJAIL_VERSION=2.6
+ENV NSJAIL_VERSION=ba01ae76f2f7acc4e09ffa9a60315824aa8ca088
 
 # AOSP dependencies from https://source.android.com/setup/initializing
 RUN apt-get update && \
