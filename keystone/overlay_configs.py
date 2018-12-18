@@ -14,7 +14,7 @@ OVERLAY_MAP = {
     'sdm845_gms': ['qcom-LA.UM.7.3-incoming', 'gms'],
     'sdm660_64': ['qcom-LA.UM.7.2-incoming'],
     'cuttlestone_x86_phone': ['cuttlestone'],
-    'msmnile': ['qcom-LA.UM.7.1.r1-incoming'],
+    'msmnile': ['qcom-LA.UM.8.1.r1-incoming', 'keystone'],
     'msm8937_32go': [],
     # NOTE: for the aosp_* targets, the cuttlestone overlay contains more than
     # is needed, but it isn't harmful and allows sharing of some required build
