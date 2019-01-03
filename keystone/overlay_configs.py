@@ -10,8 +10,7 @@ from __future__ import print_function
 
 OVERLAY_MAP = {
     'sdm845': ['qcom-LA.UM.8.3.r1-incoming', 'keystone'],
-    'sdm845_7.3': ['qcom-LA.UM.7.3-incoming', 'keystone'],
-    'sdm845_gms': ['qcom-LA.UM.7.3-incoming', 'gms'],
+    'sdm845_gms': ['qcom-LA.UM.8.3.r1-incoming', 'keystone', 'gms'],
     'sdm660_64': ['qcom-LA.UM.7.2-incoming'],
     'cuttlestone_x86_phone': ['cuttlestone'],
     'msmnile': ['qcom-LA.UM.8.1.r1-incoming', 'keystone'],
