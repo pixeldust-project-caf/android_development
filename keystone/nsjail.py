@@ -56,6 +56,7 @@ def run(nsjail_bin,
         source_dir,
         command,
         android_target,
+        overlaid_dir=None,
         dist_dir=None,
         build_id=None,
         max_cpus=None,
@@ -70,6 +71,9 @@ def run(nsjail_bin,
     command: A list of strings with the command to run.
     android_target: A string with the name of the target to be prepared
       inside the container.
+    overlaid_dir: A string with the path to the source with the overlays
+      applied to it. If none is provided, the overlays shall be applied
+      directly to provided source_dir.
     dist_dir: A string with the path to the dist directory.
     build_id: A string with the build identifier.
     max_cpus: An integer with maximum number of CPUs.
@@ -79,6 +83,9 @@ def run(nsjail_bin,
   Returns:
     A list of commands that were executed. Each command is a list of strings.
   """
+
+  if not overlaid_dir:
+    overlaid_dir = source_dir
   executed_commands = []
 
   if user_id is not None and group_id is not None:
@@ -91,13 +98,13 @@ def run(nsjail_bin,
   # Apply the overlay for the selected Android target
   # to the source directory if overlays are present
   if os.path.exists(os.path.join(source_dir, 'overlays')):
-    overlay = Overlay(android_target, source_dir)
+    overlay = Overlay(android_target, source_dir, overlaid_dir)
 
   script_dir = os.path.dirname(os.path.abspath(__file__))
   config_file = os.path.join(script_dir, 'nsjail.cfg')
   nsjail_command = [
       nsjail_bin,
-      '--bindmount', source_dir + ':/src',
+      '--bindmount', overlaid_dir + ':/src',
       '--chroot', chroot,
       '--env', 'USER=android-build',
       '--config', config_file
