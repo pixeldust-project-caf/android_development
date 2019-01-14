@@ -22,14 +22,15 @@ class BuildBusytownTest(unittest.TestCase):
         dist_dir='/dist_dir',
         build_id='0',
         max_cpus=1,
-        build_goals=build_busytown.DEFAULT_BUILD_GOALS)
+        build_goals=build_busytown.DEFAULT_BUILD_GOALS,
+        overlaid_dir='/overlaid_dir')
 
     self.assertEqual(
         commands,
         [
             [
                 '/bin/true',
-                '--bindmount', '/:/src',
+                '--bindmount', '/overlaid_dir:/src',
                 '--chroot', '/chroot',
                 '--env', 'USER=android-build',
                 '--config', '/nsjail.cfg',
@@ -57,14 +58,15 @@ class BuildBusytownTest(unittest.TestCase):
         dist_dir='/dist_dir',
         build_id='0',
         max_cpus=1,
-        build_goals=build_busytown.DEFAULT_BUILD_GOALS)
+        build_goals=build_busytown.DEFAULT_BUILD_GOALS,
+        overlaid_dir='/overlaid_dir')
 
     self.assertEqual(
         commands,
         [
             [
                 '/bin/true',
-                '--bindmount', '/:/src',
+                '--bindmount', '/overlaid_dir:/src',
                 '--chroot', '/chroot',
                 '--env', 'USER=android-build',
                 '--config', '/nsjail.cfg',
@@ -93,14 +95,15 @@ class BuildBusytownTest(unittest.TestCase):
         build_id='0',
         max_cpus=1,
         build_goals=build_busytown.DEFAULT_BUILD_GOALS +
-          ['extra_build_target'])
+          ['extra_build_target'],
+        overlaid_dir='/overlaid_dir')
 
     self.assertEqual(
         commands,
         [
             [
                 '/bin/true',
-                '--bindmount', '/:/src',
+                '--bindmount', '/overlaid_dir:/src',
                 '--chroot', '/chroot',
                 '--env', 'USER=android-build',
                 '--config', '/nsjail.cfg',
