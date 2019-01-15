@@ -8,7 +8,6 @@ from __future__ import print_function
 import argparse
 import os
 import nsjail
-import tempfile
 
 
 # The default set of build goals and options for building a Keystone target
@@ -16,7 +15,7 @@ DEFAULT_BUILD_GOALS = ['droid', 'dist', 'platform_tests']
 
 
 def build(android_target, variant, nsjail_bin, chroot, dist_dir, build_id,
-          max_cpus, build_goals, overlaid_dir=None):
+          max_cpus, build_goals):
   """Builds an Android target on a Busytown build host.
 
   Args:
@@ -30,8 +29,6 @@ def build(android_target, variant, nsjail_bin, chroot, dist_dir, build_id,
     max_cpus: An integer with maximum number of CPUs.
     build_goals: A list of strings with the goals and options to provide
       to the build command.
-    overlaid_dir: A string with the path to the source with the overlays
-      applied to it. If none is provided a temp directory will be used.
 
   Returns:
     A list of commands that were executed. Each command is a list of strings.
@@ -45,15 +42,12 @@ def build(android_target, variant, nsjail_bin, chroot, dist_dir, build_id,
       '/src',
       'make', '-j',
   ] + build_goals
-  if not overlaid_dir:
-    overlaid_dir = tempfile.mkdtemp(prefix='srctmp_')
   return nsjail.run(
       nsjail_bin=nsjail_bin,
       chroot=chroot,
       source_dir=source_dir,
       command=command,
       android_target=android_target,
-      overlaid_dir=overlaid_dir,
       dist_dir=dist_dir,
       build_id=build_id,
       max_cpus=max_cpus)
