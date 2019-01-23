@@ -41,8 +41,11 @@ RUN apt-get update && \
       #   bsdmainutils for /usr/bin/hexdump
       # Required to build msm8937_32go:
       #   genisoimage for /usr/bin/mkisofs
+      # Required to build QSaharaServer:
+      #   cmake
       bc \
       bsdmainutils \
+      cmake \
       genisoimage \
       libssl-dev \
       libxml-simple-perl \
@@ -64,6 +67,9 @@ RUN apt-get update && \
       make \
       pkg-config \
       protobuf-compiler \
+
+      # Use pigz to speed up archive operations
+      pigz \
       && \
 
     # Clean up APT cache as suggested in
