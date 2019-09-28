@@ -311,17 +311,26 @@ class Resources(object):
     def _resolve_all_privapps(self):
         """Extract package name and requested permissions."""
         if self._is_android_env:
+            all_apks = []
+            app_dir = os.path.join(os.environ['ANDROID_PRODUCT_OUT'],
+                                        'system/app')
+            product_priv_app_dir = os.path.join(os.environ['ANDROID_PRODUCT_OUT'],
+                                        'product/app')
+
+        if self._is_android_env:
             priv_app_dir = os.path.join(os.environ['ANDROID_PRODUCT_OUT'],
                                         'system/priv-app')
+            prod_priv_apps = os.path.join(os.environ['ANDROID_PRODUCT_OUT'], 'product/priv-app')
         else:
             try:
                 priv_app_dir = self.adb.pull('/system/priv-app/')
+                prod_priv_app_dir = self.adb.pull('/system/priv-app/')
             except subprocess.CalledProcessError:
                 raise MissingResourceError(
                     'Directory "/system/priv-app" could not be pulled from on '
                     'device "%s".' % self.adb.serial)
 
-        return get_output('find %s -name "*.apk"' % priv_app_dir).split()
+        return get_output('find %s -name "*.apk" && find %s -name "*.apk" && find %s  -name "*.apk" &&  find %s  -name "*.apk" ' %(priv_app_dir,  prod_priv_apps, app_dir,product_priv_app_dir )).split()
 
     def _resolve_sys_path(self, file_path):
         """Resolves a path that is a part of an Android System Image."""
@@ -329,7 +338,6 @@ class Resources(object):
             return os.path.join(os.environ['ANDROID_PRODUCT_OUT'], file_path)
         else:
             return self.adb.pull(file_path)
-
 
 def get_output(command):
     """Returns the output of the command as a string.
@@ -578,3 +586,4 @@ if __name__ == '__main__':
         exit(1)
     finally:
         cleanup()
+
