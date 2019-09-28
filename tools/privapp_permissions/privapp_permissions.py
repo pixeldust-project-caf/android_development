@@ -315,12 +315,11 @@ class Resources(object):
             app_dir = os.path.join(os.environ['ANDROID_PRODUCT_OUT'],
                                         'system/app')
             product_priv_app_dir = os.path.join(os.environ['ANDROID_PRODUCT_OUT'],
-                                        'product/app')
-
-        if self._is_android_env:
+                                        'system/product/app')
             priv_app_dir = os.path.join(os.environ['ANDROID_PRODUCT_OUT'],
                                         'system/priv-app')
-            prod_priv_apps = os.path.join(os.environ['ANDROID_PRODUCT_OUT'], 'product/priv-app')
+            prod_priv_apps = os.path.join(os.environ['ANDROID_PRODUCT_OUT'], 'system/product/priv-app')
+
         else:
             try:
                 priv_app_dir = self.adb.pull('/system/priv-app/')
@@ -338,6 +337,7 @@ class Resources(object):
             return os.path.join(os.environ['ANDROID_PRODUCT_OUT'], file_path)
         else:
             return self.adb.pull(file_path)
+
 
 def get_output(command):
     """Returns the output of the command as a string.
@@ -586,4 +586,3 @@ if __name__ == '__main__':
         exit(1)
     finally:
         cleanup()
-
